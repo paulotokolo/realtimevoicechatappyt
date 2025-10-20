@@ -1,103 +1,280 @@
-import Image from "next/image";
+import { createClient } from '@/lib/supabase/server'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { 
+  Mic, 
+  Users, 
+  Zap, 
+  Shield, 
+  MessageSquare, 
+  Globe,
+  ArrowRight,
+  CheckCircle2
+} from 'lucide-react'
+import Link from 'next/link'
 
-export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+export default async function Home() {
+  const supabase = await createClient()
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  // If user is logged in, redirect to dashboard
+  if (user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-muted-foreground mb-4">Redirecting to dashboard...</p>
+          <div className="animate-spin h-8 w-8 border-2 border-primary border-t-transparent rounded-full mx-auto"></div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+        <script dangerouslySetInnerHTML={{ __html: `window.location.href = '/dashboard'` }} />
+      </div>
+    )
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
+      {/* Navigation */}
+      <nav className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center space-x-2">
+              <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+                <Mic className="w-5 h-5 text-white" />
+              </div>
+              <span className="text-xl font-bold text-gray-900">VoiceChat</span>
+            </div>
+            <div className="flex items-center space-x-4">
+              <Link href="/login">
+                <Button variant="ghost">Sign In</Button>
+              </Link>
+              <Link href="/signup">
+                <Button>Get Started</Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      {/* Hero Section */}
+      <section className="relative py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center">
+            <Badge variant="secondary" className="mb-4">
+              🎉 Now with Real-time Communication
+            </Badge>
+            <h1 className="text-4xl sm:text-6xl font-bold text-gray-900 mb-6">
+              Connect Through
+              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                {" "}Voice
+              </span>
+            </h1>
+            <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+              Experience seamless real-time voice communication with friends, colleagues, and communities. 
+              Crystal clear audio, instant connections, and powerful features built for modern communication.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link href="/signup">
+                <Button size="lg" className="text-lg px-8 py-6">
+                  Start Chatting Now
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
+              <Button size="lg" variant="outline" className="text-lg px-8 py-6">
+                Watch Demo
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* Floating Cards */}
+        <div className="absolute top-10 left-10 hidden lg:block">
+          <Card className="w-64 shadow-lg rotate-3 hover:rotate-6 transition-transform">
+            <CardHeader className="pb-3">
+              <div className="flex items-center space-x-2">
+                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                <span className="text-sm text-muted-foreground">Live Chat</span>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm">&ldquo;The audio quality is incredible! 🎙️&rdquo;</p>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="absolute top-20 right-10 hidden lg:block">
+          <Card className="w-64 shadow-lg -rotate-3 hover:-rotate-6 transition-transform">
+            <CardHeader className="pb-3">
+              <div className="flex items-center space-x-2">
+                <Users className="w-4 h-4 text-blue-500" />
+                <span className="text-sm text-muted-foreground">Group Chat</span>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm">&ldquo;Perfect for our team meetings! 🚀&rdquo;</p>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+              Why Choose VoiceChat?
+            </h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Built with cutting-edge technology for the best voice communication experience
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
+              <CardHeader>
+                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                  <Zap className="w-6 h-6 text-blue-600" />
+                </div>
+                <CardTitle>Lightning Fast</CardTitle>
+                <CardDescription>
+                  Ultra-low latency voice transmission for real-time conversations
+                </CardDescription>
+              </CardHeader>
+            </Card>
+
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
+              <CardHeader>
+                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
+                  <Shield className="w-6 h-6 text-green-600" />
+                </div>
+                <CardTitle>Secure & Private</CardTitle>
+                <CardDescription>
+                  End-to-end encryption ensures your conversations stay private
+                </CardDescription>
+              </CardHeader>
+            </Card>
+
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
+              <CardHeader>
+                <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
+                  <Users className="w-6 h-6 text-purple-600" />
+                </div>
+                <CardTitle>Group Chats</CardTitle>
+                <CardDescription>
+                  Connect with multiple people simultaneously in crystal clear quality
+                </CardDescription>
+              </CardHeader>
+            </Card>
+
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
+              <CardHeader>
+                <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mb-4">
+                  <Globe className="w-6 h-6 text-orange-600" />
+                </div>
+                <CardTitle>Global Reach</CardTitle>
+                <CardDescription>
+                  Connect with anyone, anywhere in the world with our global infrastructure
+                </CardDescription>
+              </CardHeader>
+            </Card>
+
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
+              <CardHeader>
+                <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mb-4">
+                  <MessageSquare className="w-6 h-6 text-red-600" />
+                </div>
+                <CardTitle>Smart Features</CardTitle>
+                <CardDescription>
+                  Noise cancellation, echo reduction, and adaptive audio quality
+                </CardDescription>
+              </CardHeader>
+            </Card>
+
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
+              <CardHeader>
+                <div className="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center mb-4">
+                  <Mic className="w-6 h-6 text-teal-600" />
+                </div>
+                <CardTitle>Easy to Use</CardTitle>
+                <CardDescription>
+                  Simple, intuitive interface that gets you talking in seconds
+                </CardDescription>
+              </CardHeader>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Benefits Section */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-blue-50 to-purple-50">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6">
+                Everything you need for modern communication
+              </h2>
+              <div className="space-y-4">
+                {[
+                  "Crystal clear HD voice quality",
+                  "Instant connection with zero setup",
+                  "Works on all devices and platforms",
+                  "Advanced noise cancellation",
+                  "Secure Google OAuth authentication",
+                  "Real-time communication technology"
+                ].map((benefit, index) => (
+                  <div key={index} className="flex items-center space-x-3">
+                    <CheckCircle2 className="w-5 h-5 text-green-600 flex-shrink-0" />
+                    <span className="text-gray-700">{benefit}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <Card className="shadow-2xl">
+              <CardHeader>
+                <CardTitle className="text-center">Ready to get started?</CardTitle>
+                <CardDescription className="text-center">
+                  Join thousands of users already enjoying seamless voice communication
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <Link href="/signup" className="w-full">
+                  <Button className="w-full" size="lg">
+                    Create Free Account
+                  </Button>
+                </Link>
+                <Link href="/login" className="w-full">
+                  <Button variant="outline" className="w-full" size="lg">
+                    Sign In
+                  </Button>
+                </Link>
+                <p className="text-xs text-center text-muted-foreground">
+                  No credit card required • Free forever • Setup in 30 seconds
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="py-12 px-4 sm:px-6 lg:px-8 bg-gray-900 text-white">
+        <div className="max-w-7xl mx-auto text-center">
+          <div className="flex items-center justify-center space-x-2 mb-4">
+            <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+              <Mic className="w-5 h-5 text-white" />
+            </div>
+            <span className="text-xl font-bold">VoiceChat</span>
+          </div>
+          <p className="text-gray-400 mb-4">
+            Connecting voices, building communities.
+          </p>
+          <p className="text-sm text-gray-500">
+            © 2025 VoiceChat. All rights reserved.
+          </p>
+        </div>
       </footer>
     </div>
-  );
+  )
 }
